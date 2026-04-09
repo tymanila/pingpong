@@ -1,0 +1,74 @@
+import sys
+
+from pygame import *
+window = display.set_mode((700,500))
+display.set_caption('пингпонг')
+
+
+
+class GameSprite(sprite.Sprite):
+    def __init__(self, filename, size_x, size_y, pos_x, pos_y, speed):
+        super().__init__()
+        self.image = transform.scale(image.load(filename), (size_x, size_y))
+        self.rect = self.image.get_rect()
+        self.rect.x = pos_x
+        self.rect.y = pos_y
+        self.speed = speed
+    def draw(self):
+        window.blit(self.image, (self.rect.x, self.rect.y))
+class Player(GameSprite):
+    def update_r(self):
+        keys = key.get_pressed()
+        if keys[K_UP] and self.rect.y > 0:
+            self.rect.y -=  self.speed
+        if keys[K_DOWN] and self.rect.y < 400:
+            self.rect.y +=  self.speed
+
+    def update_l(self):
+        keys = key.get_pressed()
+        if keys[K_w] and self.rect.y > 0:
+            self.rect.y -= self.speed
+        if keys[K_s] and self.rect.y < 400:
+            self.rect.y += self.speed
+player1 = Player('paddle.png', 100, 100, 30, 50, 5)
+player2 = Player('paddle.png', 100, 100, 570, 50, 5)
+ball = GameSprite('tenis_ball.png', 30, 30, 300, 150, -3)
+
+
+font.init()
+font = font.Font(None, 40)
+loose1 = font.render('игрок слева проиграл', True, (255, 0, 0))
+loose2 = font.render('игрок справа проиграл', True, (255, 0, 0))
+
+clock = time.Clock()
+speed_x = -3
+speed_y = -3
+game_over1 = False
+game_over2 = False
+while True:
+    window.fill((0, 0, 0))
+    player1.draw()
+    player1.update_l()
+    player2.draw()
+    player2.update_r()
+    ball.draw()
+    ball.rect.x += speed_x
+    ball.rect.y += speed_y
+
+    if sprite.collide_rect(player1, ball) or sprite.collide_rect(player2, ball):
+        speed_x *= -1
+        speed_y *= -1
+    if ball.rect.x > 700:
+        game_over1 = True
+    if game_over1:
+        window.blit(loose2,(200, 250))
+    if ball.rect.x < 0:
+        game_over2 = True
+    if game_over2:
+        window.blit(loose1, (200, 250))
+
+    for e in event.get():
+        if e.type == QUIT:
+            sys.exit()
+    clock.tick(60)
+    display.update()
