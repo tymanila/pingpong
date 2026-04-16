@@ -1,7 +1,7 @@
 import sys
 
 from pygame import *
-window = display.set_mode((700,500))
+window = display.set_mode((600,500))
 display.set_caption('пингпонг')
 
 
@@ -30,9 +30,9 @@ class Player(GameSprite):
             self.rect.y -= self.speed
         if keys[K_s] and self.rect.y < 400:
             self.rect.y += self.speed
-player1 = Player('paddle.png', 100, 100, 30, 50, 5)
-player2 = Player('paddle.png', 100, 100, 570, 50, 5)
-ball = GameSprite('tenis_ball.png', 30, 30, 300, 150, -3)
+player1 = Player('paddle.png', 50, 150, 30, 200, 4)
+player2 = Player('paddle.png', 50, 150, 520, 50, 4)
+ball = GameSprite('tenis_ball.png', 50, 50, 200, 200, 4)
 
 
 font.init()
@@ -41,8 +41,8 @@ loose1 = font.render('игрок слева проиграл', True, (255, 0, 0)
 loose2 = font.render('игрок справа проиграл', True, (255, 0, 0))
 
 clock = time.Clock()
-speed_x = -3
-speed_y = -3
+speed_x = 3
+speed_y = 3
 game_over1 = False
 game_over2 = False
 while True:
@@ -57,7 +57,7 @@ while True:
 
     if sprite.collide_rect(player1, ball) or sprite.collide_rect(player2, ball):
         speed_x *= -1
-        speed_y *= -1
+        #speed_y *= -1
     if ball.rect.x > 700:
         game_over1 = True
     if game_over1:
@@ -67,6 +67,8 @@ while True:
     if game_over2:
         window.blit(loose1, (200, 250))
 
+    if ball.rect.y < 0 or ball.rect.y > 450:
+        speed_y *= -1
     for e in event.get():
         if e.type == QUIT:
             sys.exit()
